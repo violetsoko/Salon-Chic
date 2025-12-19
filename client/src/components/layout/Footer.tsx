@@ -42,6 +42,9 @@ export default function Footer() {
                   <a href="#" className="text-zinc-400 hover:text-accent transition-colors">{item}</a>
                 </li>
               ))}
+              <li>
+                <a href="/dashboard" className="text-zinc-400 hover:text-accent transition-colors font-semibold text-sm">→ Staff Dashboard</a>
+              </li>
             </ul>
           </div>
 
