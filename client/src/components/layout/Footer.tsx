@@ -2,8 +2,43 @@ import { Facebook, Instagram, Twitter } from "lucide-react";
 import logoImage from "@assets/generated_images/minimalist_salon_logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubscribe = async () => {
+    if (!email.trim()) {
+      toast({
+        title: "Please enter your email",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSubscribing(true);
+    try {
+      // Simulate subscription - in a real app, this would hit an API
+      await new Promise(resolve => setTimeout(resolve, 500));
+      toast({
+        title: "Success!",
+        description: "Thank you for subscribing to our newsletter.",
+      });
+      setEmail("");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to subscribe. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
   return (
     <footer className="bg-zinc-900 text-white pt-20 pb-10">
       <div className="container mx-auto px-4 md:px-6">
@@ -69,9 +104,20 @@ export default function Footer() {
             <div className="flex flex-col gap-3">
               <Input 
                 placeholder="Your email address" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleSubscribe()}
                 className="bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-accent"
+                data-testid="input-subscribe-email"
               />
-              <Button className="bg-accent hover:bg-accent/90 text-white w-full">Subscribe</Button>
+              <Button 
+                onClick={handleSubscribe}
+                disabled={subscribing}
+                className="bg-accent hover:bg-accent/90 text-white w-full"
+                data-testid="button-subscribe"
+              >
+                {subscribing ? "Subscribing..." : "Subscribe"}
+              </Button>
             </div>
           </div>
         </div>
