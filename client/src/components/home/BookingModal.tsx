@@ -35,19 +35,29 @@ export default function BookingModal({ open, onOpenChange }: BookingModalProps) 
 
   const bookingMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
+      // Validate all required fields
+      if (!data.clientName || !data.clientEmail || !data.clientPhone || !data.service || !data.appointmentDate) {
+        throw new Error("Please fill in all required fields");
+      }
+
       const response = await fetch("/api/appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...data,
-          appointmentDate: new Date(data.appointmentDate),
+          clientName: data.clientName,
+          clientEmail: data.clientEmail,
+          clientPhone: data.clientPhone,
+          service: data.service,
+          appointmentDate: new Date(data.appointmentDate + "Z").toISOString(),
           duration: 60,
           status: "pending",
+          notes: data.notes || null,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to book appointment");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData?.error || "Failed to book appointment");
       }
 
       return response.json();
@@ -67,10 +77,11 @@ export default function BookingModal({ open, onOpenChange }: BookingModalProps) 
       });
       onOpenChange(false);
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Booking error:", error);
       toast({
         title: "Error",
-        description: "Failed to book appointment. Please try again.",
+        description: error?.message || "Failed to book appointment. Please try again.",
         variant: "destructive",
       });
     },

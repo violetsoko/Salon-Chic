@@ -31,10 +31,17 @@ export const appointments = pgTable("appointments", {
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
-export const insertAppointmentSchema = createInsertSchema(appointments).omit({
-  id: true,
-  createdAt: true,
-});
+export const insertAppointmentSchema = createInsertSchema(appointments)
+  .omit({
+    id: true,
+    createdAt: true,
+  })
+  .extend({
+    appointmentDate: z.union([
+      z.date(),
+      z.string().datetime().transform(str => new Date(str)),
+    ]),
+  });
 
 export type InsertAppointment = z.infer<typeof insertAppointmentSchema>;
 export type Appointment = typeof appointments.$inferSelect;
