@@ -10,10 +10,14 @@ import { useToast } from "@/hooks/use-toast";
 import { Calendar } from "lucide-react";
 
 const services = [
-  "Hair Coloring & Highlights",
-  "Haircuts & Styling",
-  "Hair Treatments & Repair",
-  "Extensions & Special Occasions",
+  "Box Braids",
+  "Knotless Braids",
+  "Cornrows",
+  "Goddess Braids",
+  "Locs & Dreadlocks",
+  "Twists & Senegalese",
+  "Crochet Braids",
+  "Feed-in Braids",
 ];
 
 interface BookingModalProps {

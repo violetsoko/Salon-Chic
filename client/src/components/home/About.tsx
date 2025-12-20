@@ -26,17 +26,17 @@ export default function About() {
           <div className="order-1 lg:order-2">
             <h4 className="text-accent uppercase tracking-widest text-sm font-semibold mb-3">Who We Are</h4>
             <h2 className="text-4xl md:text-5xl font-serif font-medium text-primary mb-6">
-              Redefining Beauty <br/> & Confidence
+              Braiding <br/> Excellence & Artistry
             </h2>
             <p className="text-muted-foreground text-lg font-light mb-6 leading-relaxed">
-              At Lumière, we believe that your hair is your best accessory. Founded in 2015, our salon has become a sanctuary for those seeking exceptional hair care in a luxurious, relaxing environment.
+              At Lumière, braiding is more than a service—it's an art form. We specialise in creating stunning, protective styles that celebrate your natural beauty and unique style. Our salon has become the trusted destination for those seeking expert braiding in the UK.
             </p>
             <p className="text-muted-foreground text-lg font-light mb-8 leading-relaxed">
-              Our team of master stylists stays ahead of the trends to bring you the latest techniques in color, cutting, and styling. We use only premium, eco-friendly products that nourish your hair while delivering stunning results.
+              Our team of master braiders brings precision, creativity, and passion to every style. From classic box braids to intricate cornrows and locs, we deliver stunning results using the highest standards of technique and care.
             </p>
 
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-              {["Master Stylists", "Premium Products", "Personalized Consultations", "Relaxing Atmosphere"].map((item) => (
+              {["Expert Braiders", "Premium Care", "Custom Designs", "Protective Styling"].map((item) => (
                 <li key={item} className="flex items-center gap-2">
                   <div className="h-6 w-6 rounded-full bg-accent/20 flex items-center justify-center text-accent">
                     <Check className="h-4 w-4" />

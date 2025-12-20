@@ -35,16 +35,16 @@ export default function Hero() {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <h2 className="text-accent uppercase tracking-[0.2em] text-sm md:text-base font-medium mb-4">
-              Premium Hair Styling
+              Expert Hair Braiding
             </h2>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold leading-[1.1] mb-6 drop-shadow-lg">
-              Transform <br />
-              <span className="italic font-light">Your Look</span> <br />
-              And Style
+              Master <br />
+              <span className="italic font-light">Braiding</span> <br />
+              Artistry
             </h1>
             <p className="text-lg md:text-xl text-white/90 mb-8 max-w-md font-light leading-relaxed">
-              Experience the art of hair with our expert stylists. 
-              Creating confidence through exceptional care and personalized styling.
+              Discover the art of expert braiding. 
+              Stunning, protective styles crafted with precision and passion.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
