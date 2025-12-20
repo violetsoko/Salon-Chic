@@ -86,9 +86,9 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-[hsl(40_20%_98%)]">
+    <div className="flex flex-col lg:flex-row h-screen bg-[hsl(40_20%_98%)]">
       {/* Sidebar */}
-      <div className="w-64 bg-[hsl(270_5%_20%)] text-white p-6 overflow-y-auto">
+      <div className="w-full lg:w-64 bg-[hsl(270_5%_20%)] text-white p-6 overflow-y-auto lg:overflow-y-auto">
         <div className="mb-8">
           <h2 className="text-2xl font-serif font-bold">Salon.</h2>
         </div>
@@ -137,14 +137,14 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto w-full">
         {/* Top Header */}
-        <div className="bg-white border-b border-gray-200 px-8 py-6 flex justify-between items-center">
+        <div className="bg-white border-b border-gray-200 px-4 md:px-8 py-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-2xl font-serif font-bold text-[hsl(270_5%_20%)] mb-1">Overview</h1>
             <p className="text-sm text-gray-500">This Week</p>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto">
             <div className="relative">
               <Search size={20} className="absolute left-3 top-3 text-gray-400" />
               <input
@@ -164,9 +164,9 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="p-8">
+        <div className="p-4 md:p-8">
           {/* Metrics Cards */}
-          <div className="grid grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <Card className="border-0 shadow-md">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
@@ -225,9 +225,9 @@ export default function Dashboard() {
           </div>
 
           {/* Charts Row */}
-          <div className="grid grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {/* Appointments Chart */}
-            <Card className="border-0 shadow-md col-span-2">
+            <Card className="border-0 shadow-md">
               <CardHeader>
                 <CardTitle className="text-lg">Overall Appointments</CardTitle>
               </CardHeader>
@@ -243,130 +243,61 @@ export default function Dashboard() {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-
-            {/* Gender Distribution */}
-            <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg">Gender</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={250}>
-                  <PieChart>
-                    <Pie
-                      data={genderData}
-                      innerRadius={60}
-                      outerRadius={90}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      <Cell fill="hsl(35 40% 70%)" />
-                      <Cell fill="hsl(330 15% 30%)" />
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="mt-4 space-y-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "hsl(35 40% 70%)" }}></div>
-                    <span>Female</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "hsl(330 15% 30%)" }}></div>
-                    <span>Male</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
 
-          {/* Stylists and Financial Goal */}
-          <div className="grid grid-cols-2 gap-6 mb-8">
-            {/* Stylists */}
+          {/* Stylists */}
+          <div className="mb-8">
             <Card className="border-0 shadow-md">
               <CardHeader>
                 <CardTitle className="text-lg">Stylists</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {stylists.map((stylist) => (
                     <div key={stylist.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[hsl(35_40%_70%)]/20 flex items-center justify-center text-xl">
+                        <div className="w-10 h-10 rounded-full bg-[hsl(35_40%_70%)]/20 flex items-center justify-center text-xl flex-shrink-0">
                           {stylist.avatar}
                         </div>
-                        <div>
-                          <p className="font-medium text-sm">{stylist.name}</p>
-                          <p className="text-xs text-gray-600">{stylist.role}</p>
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm truncate">{stylist.name}</p>
+                          <p className="text-xs text-gray-600 truncate">{stylist.role}</p>
                         </div>
                       </div>
-                      <div className="cursor-pointer">⋮</div>
+                      <div className="cursor-pointer ml-2">⋮</div>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
-
-            {/* Financial Goal */}
-            <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg">Financial Goal</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4">
-                  <p className="text-2xl font-bold text-[hsl(270_5%_20%)]">Target $200k</p>
-                </div>
-                <ResponsiveContainer width="100%" height={180}>
-                  <AreaChart data={financialData}>
-                    <defs>
-                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(35 40% 70%)" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="hsl(35 40% 70%)" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Area
-                      type="monotone"
-                      dataKey="revenue"
-                      stroke="hsl(35 40% 70%)"
-                      fillOpacity={1}
-                      fill="url(#colorRevenue)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Right Panel - Upcoming Appointments */}
-          <div className="grid grid-cols-3 gap-6">
-            <div className="col-span-2 grid grid-cols-1 gap-6">
-              {/* Contact Inquiries */}
-              {contacts.length > 0 && (
-                <Card className="border-0 shadow-md">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Recent Inquiries</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {contacts.slice(0, 3).map((contact) => (
-                        <div key={contact.id} className="p-3 rounded-lg border border-gray-200">
-                          <div className="flex justify-between items-start mb-1">
-                            <p className="font-medium text-sm">{contact.name}</p>
-                            <Badge className="text-xs" variant="outline">
-                              {contact.status}
-                            </Badge>
-                          </div>
-                          <p className="text-xs text-gray-600">{contact.email}</p>
-                          <p className="text-xs text-gray-500 mt-1 line-clamp-2">{contact.message}</p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Contact Inquiries */}
+            {contacts.length > 0 && (
+              <Card className="border-0 shadow-md lg:col-span-2">
+                <CardHeader>
+                  <CardTitle className="text-lg">Recent Inquiries</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {contacts.slice(0, 3).map((contact) => (
+                      <div key={contact.id} className="p-3 rounded-lg border border-gray-200">
+                        <div className="flex justify-between items-start mb-1">
+                          <p className="font-medium text-sm">{contact.name}</p>
+                          <Badge className="text-xs" variant="outline">
+                            {contact.status}
+                          </Badge>
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
+                        <p className="text-xs text-gray-600">{contact.email}</p>
+                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{contact.message}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Upcoming Appointments Panel */}
             <Card className="border-0 shadow-md">
@@ -433,3 +364,7 @@ export default function Dashboard() {
     </div>
   );
 }
+
+// Mobile-friendly sidebar toggle would go here
+// For now, the sidebar is always visible
+// On mobile, it would need to be hidden or converted to a hamburger menu
