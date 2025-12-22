@@ -1,46 +1,62 @@
 import { useState } from "react";
 import { Play } from "lucide-react";
+import boxBraidsPoster from "@assets/generated_images/box_braids_video_poster_thumbnail.png";
+import knotlessBraidsPoster from "@assets/generated_images/knotless_braids_video_poster_thumbnail.png";
+import cornrowsPoster from "@assets/generated_images/cornrows_video_poster_thumbnail.png";
+import goddessBraidsPoster from "@assets/generated_images/goddess_braids_video_poster_thumbnail.png";
+import twistBraidsPoster from "@assets/generated_images/twist_braids_video_poster_thumbnail.png";
+import lemonadeBraidsPoster from "@assets/generated_images/lemonade_braids_video_poster_thumbnail.png";
+import bridalUpdoPoster from "@assets/generated_images/bridal_updo_video_poster_thumbnail.png";
+import kidsBraidsPoster from "@assets/generated_images/kids_braids_video_poster_thumbnail.png";
 
 const videos = [
   {
     id: 1,
     title: "Box Braids",
     src: "/attached_assets/44866e04b82afa54babf6ee8a2a8f047_1766377113492.mp4",
+    poster: boxBraidsPoster,
   },
   {
     id: 2,
     title: "Knotless Braids",
     src: "/attached_assets/807a360603ef04dedc93ef80b0a0b11f_1766377113695.mp4",
+    poster: knotlessBraidsPoster,
   },
   {
     id: 3,
     title: "Cornrows",
     src: "/attached_assets/37265b4dd110e7f81ba7bba3f6c49d93_1766377113757.mp4",
+    poster: cornrowsPoster,
   },
   {
     id: 4,
     title: "Goddess Braids",
     src: "/attached_assets/327ce19813f75444b61f248311f2e68d_1766377113810.mp4",
+    poster: goddessBraidsPoster,
   },
   {
     id: 5,
     title: "Twists",
     src: "/attached_assets/e763ef1f171361e0b05b9edbd12062f6_1766377113849.mp4",
+    poster: twistBraidsPoster,
   },
   {
     id: 6,
     title: "Lemonade Braids",
     src: "/attached_assets/0f3751f129b0d737945ae15e7ac087f1_1766377113897.mp4",
+    poster: lemonadeBraidsPoster,
   },
   {
     id: 7,
     title: "Bridal Updo",
     src: "/attached_assets/065a74cc055395d54a9a981e5862974f_1766377113950.mp4",
+    poster: bridalUpdoPoster,
   },
   {
     id: 8,
     title: "Kids Braids",
     src: "/attached_assets/a4c3cbdeaa578b7dd938064d1c09c538_1766377113999.mp4",
+    poster: kidsBraidsPoster,
   },
 ];
 
@@ -62,13 +78,18 @@ export default function Videos() {
           {videos.map((video) => (
             <div
               key={video.id}
-              className="group relative overflow-hidden rounded-lg bg-secondary/20 aspect-[9/16]"
-              onClick={() => setPlayingId(video.id)}
+              className="group relative overflow-hidden rounded-lg bg-secondary/20 aspect-[9/16] cursor-pointer"
               data-testid={`video-card-${video.id}`}
             >
+              <img
+                src={video.poster}
+                alt={video.title}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
               <video
                 src={video.src}
-                className="w-full h-full object-cover cursor-pointer"
+                poster={video.poster}
+                className="w-full h-full object-cover cursor-pointer hidden"
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
                 <div className="h-16 w-16 rounded-full bg-accent/0 group-hover:bg-accent transition-colors duration-300 flex items-center justify-center">
