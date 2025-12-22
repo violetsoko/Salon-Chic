@@ -1,4 +1,4 @@
-import heroImage from "@assets/generated_images/hero_image_of_woman_with_flowing_hair.png";
+import heroImage from "@assets/Screenshot_20251222_071612_com.huawei.himovie.overseas_edit_34_1766380789766.jpg";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState } from "react";

@@ -1,15 +1,23 @@
 import { useState } from "react";
-import heroImage from "@assets/generated_images/hero_image_of_woman_with_flowing_hair.png";
-import colorImage from "@assets/generated_images/hair_coloring_service_image.png";
-import cutImage from "@assets/generated_images/haircut_service_image.png";
-import extensionImage from "@assets/generated_images/extensions_service_image.png";
+import image1 from "@assets/Screenshot_20251222_071218_com.android.gallery3d_edit_34296968_1766380789637.jpg";
+import image2 from "@assets/Screenshot_20251222_071537_com.huawei.himovie.overseas_edit_34_1766380789728.jpg";
+import image3 from "@assets/Screenshot_20251222_071612_com.huawei.himovie.overseas_edit_34_1766380789766.jpg";
+import image4 from "@assets/Screenshot_20251222_070754_com.huawei.himovie.overseas_edit_34_1766380789847.jpg";
+import image5 from "@assets/Screenshot_20251222_070824_com.huawei.himovie.overseas_edit_33_1766380789883.jpg";
+import image6 from "@assets/Screenshot_20251222_070858_com.huawei.himovie.overseas_edit_33_1766380789921.jpg";
+import image7 from "@assets/Screenshot_20251222_070948_com.huawei.himovie.overseas_edit_33_1766380789961.jpg";
+import image8 from "@assets/Screenshot_20251222_070916_com.huawei.himovie.overseas_1766380790004.jpg";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const galleryImages = [
-  { id: 1, src: colorImage, alt: "Blonde Balayage Transformation", category: "Color" },
-  { id: 2, src: extensionImage, alt: "Volume Extensions", category: "Extensions" },
-  { id: 3, src: cutImage, alt: "Precision Bob Cut", category: "Cut" },
-  { id: 4, src: heroImage, alt: "Glamour Styling", category: "Style" },
+  { id: 1, src: image1, alt: "Cornrows with Beads", category: "Cornrows" },
+  { id: 2, src: image2, alt: "Goddess Braids", category: "Goddess Braids" },
+  { id: 3, src: image3, alt: "Long Box Braids", category: "Box Braids" },
+  { id: 4, src: image4, alt: "Salon Cornrows", category: "Cornrows" },
+  { id: 5, src: image5, alt: "Creative Bun Braids", category: "Bun Braids" },
+  { id: 6, src: image6, alt: "Underwig Cornrows Design", category: "Cornrows" },
+  { id: 7, src: image7, alt: "Side Feed-in Braids", category: "Feed-in Braids" },
+  { id: 8, src: image8, alt: "Locs Styling", category: "Locs" },
 ];
 
 export default function Gallery() {
@@ -21,7 +29,7 @@ export default function Gallery() {
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div className="max-w-xl">
             <h4 className="text-accent uppercase tracking-widest text-sm font-semibold mb-3">Portfolio</h4>
-            <h2 className="text-4xl md:text-5xl font-serif font-medium text-primary">Real Transformations</h2>
+            <h2 className="text-4xl md:text-5xl font-serif font-medium text-primary">Our Braiding Gallery</h2>
           </div>
           <button className="text-primary hover:text-accent font-medium tracking-wide border-b border-primary hover:border-accent transition-colors pb-1">
             VIEW FULL GALLERY

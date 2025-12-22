@@ -1,4 +1,4 @@
-import aboutImage from "@assets/generated_images/luxury_salon_interior.png";
+import aboutImage from "@assets/Screenshot_20251222_070754_com.huawei.himovie.overseas_edit_34_1766380789847.jpg";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 
