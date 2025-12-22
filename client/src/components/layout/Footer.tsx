@@ -50,10 +50,10 @@ export default function Footer() {
               <div className="h-10 w-10 bg-white rounded-full p-1">
                 <img src={logoImage} alt="Logo" className="h-full w-full object-contain" />
               </div>
-              <span className="text-2xl font-serif font-bold">FLORENCE</span>
+              <span className="text-2xl font-serif font-bold">LUMIÈRE</span>
             </div>
             <p className="text-zinc-400 font-light leading-relaxed">
-              Expert hair braiding specialist in Huntingdon. Specialising in protective and custom braiding styles with precision and artistry.
+              Elevating hair care to an art form. Experience luxury, style, and confidence in every visit.
             </p>
             <div className="flex gap-4">
               <a href="#" className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent hover:text-white transition-colors">
@@ -87,9 +87,12 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-serif font-medium mb-6">Contact</h3>
             <ul className="space-y-4 text-zinc-400">
-              <li>Huntingdon,<br/>UK</li>
+              <li>123 Fashion Avenue,<br/>New York, NY 10012</li>
               <li>
-                <a href="mailto:Florencesoko645@gmail.com" className="hover:text-accent transition-colors">Florencesoko645@gmail.com</a>
+                <a href="tel:+12125550123" className="hover:text-accent transition-colors">+1 (212) 555-0123</a>
+              </li>
+              <li>
+                <a href="mailto:hello@lumieresalon.com" className="hover:text-accent transition-colors">hello@lumieresalon.com</a>
               </li>
             </ul>
           </div>
@@ -120,7 +123,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-zinc-500">
-          <p>&copy; 2024 Florence Braiding. All rights reserved.</p>
+          <p>&copy; 2024 Lumière Salon. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
