@@ -7,9 +7,11 @@ import image5 from "@assets/Screenshot_20251222_070824_com.huawei.himovie.overse
 import image6 from "@assets/Screenshot_20251222_070858_com.huawei.himovie.overseas_edit_33_1766380789921.jpg";
 import image7 from "@assets/Screenshot_20251222_070948_com.huawei.himovie.overseas_edit_33_1766380789961.jpg";
 import image8 from "@assets/Screenshot_20251222_070916_com.huawei.himovie.overseas_1766380790004.jpg";
+import braidsAiImage from "@assets/Gemini_Generated_Image_41vmcf41vmcf41vm_1766765928353.png";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
-const galleryImages = [
+const allGalleryImages = [
   { id: 1, src: image1, alt: "Cornrows with Beads", category: "Cornrows" },
   { id: 2, src: image2, alt: "Goddess Braids", category: "Goddess Braids" },
   { id: 3, src: image3, alt: "Long Box Braids", category: "Box Braids" },
@@ -17,11 +19,15 @@ const galleryImages = [
   { id: 5, src: image5, alt: "Creative Bun Braids", category: "Bun Braids" },
   { id: 6, src: image6, alt: "Underwig Cornrows Design", category: "Cornrows" },
   { id: 7, src: image7, alt: "Side Feed-in Braids", category: "Feed-in Braids" },
-  { id: 8, src: image8, alt: "Locs Styling", category: "Locs" },
+  { id: 8, src: image8, alt: "Knotless Braids", category: "Knotless Braids" },
+  { id: 9, src: braidsAiImage, alt: "Artistic Braiding", category: "Artistic Braiding" },
 ];
 
 export default function Gallery() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [viewAll, setViewAll] = useState(false);
+
+  const galleryImages = viewAll ? allGalleryImages : [allGalleryImages[0]];
 
   return (
     <section id="gallery" className="py-24 bg-background">
@@ -31,17 +37,22 @@ export default function Gallery() {
             <h4 className="text-accent uppercase tracking-widest text-sm font-semibold mb-3">Portfolio</h4>
             <h2 className="text-4xl md:text-5xl font-serif font-medium text-primary">Our Braiding Gallery</h2>
           </div>
-          <button className="text-primary hover:text-accent font-medium tracking-wide border-b border-primary hover:border-accent transition-colors pb-1">
-            VIEW FULL GALLERY
-          </button>
+          <Button 
+            onClick={() => setViewAll(!viewAll)}
+            className="bg-primary text-white hover:bg-primary/90 rounded-full px-6"
+            data-testid="button-view-gallery"
+          >
+            {viewAll ? "Hide Gallery" : "View Gallery"}
+          </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className={`grid grid-cols-1 ${viewAll ? "md:grid-cols-2 lg:grid-cols-3 gap-4" : "gap-4"}`}>
           {galleryImages.map((img) => (
             <div 
               key={img.id}
               className="group relative overflow-hidden rounded-lg cursor-zoom-in aspect-square"
               onClick={() => setSelectedImage(img.src)}
+              data-testid={`gallery-image-${img.id}`}
             >
               <img 
                 src={img.src} 

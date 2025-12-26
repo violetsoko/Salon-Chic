@@ -1,8 +1,8 @@
-# Lumière Salon
+# Florence - Hair Braiding Specialist
 
 ## Overview
 
-Lumière Salon is a luxury hair salon website with appointment booking, contact forms, testimonials, and an admin dashboard. The application features a modern React frontend with a polished design using custom typography (Playfair Display, Montserrat) and a sophisticated color scheme. The backend is built with Express and uses PostgreSQL for data persistence.
+Florence is an expert hair braiding specialist website showcasing professional braiding services with appointment booking, testimonials, and an admin dashboard. The application features a modern React frontend with a polished design using custom typography (Playfair Display, Montserrat) and a sophisticated color scheme. The backend is built with Express and uses PostgreSQL for data persistence. Services include Box Braids, Knotless Braids, Cornrows, Goddess Braids, Twists & Senegalese, Bun Braids, Feed-in Braids, and Artistic Braiding.
 
 ## User Preferences
 

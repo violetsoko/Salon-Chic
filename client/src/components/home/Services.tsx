@@ -7,56 +7,56 @@ import twistsImage from "@assets/Screenshot_20251222_070858_com.huawei.himovie.o
 import bunBraidsImage from "@assets/Screenshot_20251222_070824_com.huawei.himovie.overseas_edit_33_1766380789883.jpg";
 import feedInImage from "@assets/Screenshot_20251222_070948_com.huawei.himovie.overseas_edit_33_1766380789961.jpg";
 import knotlessImage from "@assets/Screenshot_20251222_071434_com.huawei.himovie.overseas_1766380789806.jpg";
-import locImage from "@assets/Screenshot_20251222_070916_com.huawei.himovie.overseas_1766380790004.jpg";
+import braidsAiImage from "@assets/Gemini_Generated_Image_41vmcf41vmcf41vm_1766765928353.png";
 
 const services = [
   {
     id: 1,
     title: "Box Braids",
-    description: "Classic and versatile box braids that offer a clean, polished look. Perfect for protective styling with endless customization options.",
     image: boxBraidsImage,
+    size: "large",
   },
   {
     id: 2,
     title: "Knotless Braids",
-    description: "Modern knotless technique that reduces tension and damage. Lightweight, comfortable, and incredibly stylish with a seamless finish.",
     image: knotlessImage,
+    size: "small",
   },
   {
     id: 3,
     title: "Cornrows",
-    description: "Intricate cornrow patterns that showcase artistry and creativity. From simple lines to complex geometric designs.",
     image: cornrowsImage,
+    size: "small",
   },
   {
     id: 4,
     title: "Goddess Braids",
-    description: "Elegant and sophisticated goddess braids with added volume and glamour. Perfect for special occasions or everyday elegance.",
     image: goddessImage,
+    size: "large",
   },
   {
     id: 5,
-    title: "Locs & Dreadlocks",
-    description: "Professional locs installation and maintenance. A timeless statement that celebrates natural texture and cultural heritage.",
-    image: locImage,
+    title: "Twists & Senegalese",
+    image: twistsImage,
+    size: "small",
   },
   {
     id: 6,
-    title: "Twists & Senegalese",
-    description: "Beautiful two-strand twists and Senegalese twists with smooth, defined texture. Protective and incredibly chic.",
-    image: twistsImage,
+    title: "Bun Braids",
+    image: bunBraidsImage,
+    size: "small",
   },
   {
     id: 7,
-    title: "Bun Braids",
-    description: "Creative bun braids combining protective styling with beautiful updo designs. Perfect for daily wear and special events.",
-    image: bunBraidsImage,
+    title: "Feed-in Braids",
+    image: feedInImage,
+    size: "small",
   },
   {
     id: 8,
-    title: "Feed-in Braids",
-    description: "Natural-looking feed-in braids that blend seamlessly with your hair. Minimal tension for maximum comfort.",
-    image: feedInImage,
+    title: "Artistic Braiding",
+    image: braidsAiImage,
+    size: "small",
   },
 ];
 
@@ -64,38 +64,41 @@ export default function Services() {
   return (
     <section id="services" className="py-24 bg-background">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h4 className="text-accent uppercase tracking-widest text-sm font-semibold mb-3">Our Specialty</h4>
-          <h2 className="text-4xl md:text-5xl font-serif font-medium text-primary mb-6">Braiding Styles</h2>
-          <p className="text-muted-foreground text-lg font-light">
-            From timeless classics to modern designs, we offer a complete range of braiding styles tailored to your unique personality and lifestyle.
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+          <div>
+            <h2 className="text-5xl md:text-6xl font-serif font-bold text-primary mb-3">OUR SERVICES</h2>
+          </div>
+          <Button className="bg-primary text-white hover:bg-primary/90 rounded-full px-6 h-10">
+            View All <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {services.map((service) => (
             <div 
-              key={service.id} 
-              className="group relative flex flex-col h-full bg-card hover:shadow-xl transition-all duration-300 rounded-sm overflow-hidden border border-border/50"
+              key={service.id}
+              className={`group relative overflow-hidden rounded-lg cursor-pointer transition-all duration-300 ${
+                service.size === "large" ? "md:col-span-2 md:row-span-2 aspect-auto min-h-96" : "aspect-square"
+              }`}
             >
-              <div className="aspect-[4/5] overflow-hidden relative">
-                <img 
-                  src={service.image} 
-                  alt={service.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-              </div>
-              <div className="p-6 flex flex-col flex-grow text-center relative bg-white dark:bg-zinc-900 -mt-8 mx-4 shadow-lg mb-4 rounded-sm z-10">
-                <h3 className="text-xl font-serif font-semibold text-primary mb-3">{service.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-4 flex-grow">
-                  {service.description}
-                </p>
-                <div className="pt-2 border-t border-border/50 w-full flex justify-center">
-                  <Button variant="link" className="text-accent hover:text-primary p-0 h-auto font-medium group-hover:underline">
-                    Book This Style <ArrowRight className="ml-1 h-3 w-3" />
-                  </Button>
-                </div>
+              <img 
+                src={service.image} 
+                alt={service.title} 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300" />
+              
+              <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6">
+                <h3 className="text-white font-serif text-lg md:text-2xl font-bold mb-3 uppercase tracking-wider">
+                  {service.title}
+                </h3>
+                <Button 
+                  size="sm"
+                  className="w-fit bg-white text-primary hover:bg-accent hover:text-white rounded-full"
+                  data-testid={`button-book-${service.title.toLowerCase().replace(/\s+/g, '-')}`}
+                >
+                  Book <ArrowRight className="ml-2 h-3 w-3" />
+                </Button>
               </div>
             </div>
           ))}

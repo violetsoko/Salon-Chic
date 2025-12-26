@@ -29,10 +29,10 @@ export default function About() {
               Braiding <br/> Excellence & Artistry
             </h2>
             <p className="text-muted-foreground text-lg font-light mb-6 leading-relaxed">
-              At Lumière, braiding is more than a service—it's an art form. We specialise in creating stunning, protective styles that celebrate your natural beauty and unique style. Our salon has become the trusted destination for those seeking expert braiding in the UK.
+              At Florence, braiding is more than a service—it's an art form. We specialise in creating stunning, protective styles that celebrate your natural beauty and unique style. Our salon has become the trusted destination for those seeking expert braiding in the UK.
             </p>
             <p className="text-muted-foreground text-lg font-light mb-8 leading-relaxed">
-              Our team of master braiders brings precision, creativity, and passion to every style. From classic box braids to intricate cornrows and locs, we deliver stunning results using the highest standards of technique and care.
+              Our team of master braiders brings precision, creativity, and passion to every style. From classic box braids to intricate cornrows and artistic designs, we deliver stunning results using the highest standards of technique and care.
             </p>
 
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">

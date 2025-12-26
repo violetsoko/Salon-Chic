@@ -50,7 +50,7 @@ export default function Footer() {
               <div className="h-10 w-10 bg-white rounded-full p-1">
                 <img src={logoImage} alt="Logo" className="h-full w-full object-contain" />
               </div>
-              <span className="text-2xl font-serif font-bold">LUMIÈRE</span>
+              <span className="text-2xl font-serif font-bold">FLORENCE</span>
             </div>
             <p className="text-zinc-400 font-light leading-relaxed">
               Elevating hair care to an art form. Experience luxury, style, and confidence in every visit.
