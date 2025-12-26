@@ -61,6 +61,13 @@ const services = [
 ];
 
 export default function Services() {
+  const handleViewAll = () => {
+    const gallerySection = document.getElementById("gallery");
+    if (gallerySection) {
+      gallerySection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <section id="services" className="py-24 bg-background">
       <div className="container mx-auto px-4 md:px-6">
@@ -68,7 +75,11 @@ export default function Services() {
           <div>
             <h2 className="text-5xl md:text-6xl font-serif font-bold text-primary mb-3">OUR SERVICES</h2>
           </div>
-          <Button className="bg-primary text-white hover:bg-primary/90 rounded-full px-6 h-10">
+          <Button 
+            onClick={handleViewAll}
+            className="bg-primary text-white hover:bg-primary/90 rounded-full px-6 h-10"
+            data-testid="button-view-all-services"
+          >
             View All <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>

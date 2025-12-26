@@ -87,7 +87,7 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-serif font-medium mb-6">Contact</h3>
             <ul className="space-y-4 text-zinc-400">
-              <li>Enya Huntingdon,<br/>Cambridgeshire</li>
+              <li>Huntingdon,<br/>Cambridgeshire</li>
               <li>
                 <a href="mailto:Florencesoko645@gmail.com" className="hover:text-accent transition-colors">Florencesoko645@gmail.com</a>
               </li>
