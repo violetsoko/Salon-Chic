@@ -1,4 +1,4 @@
-import aboutImage from "@assets/Screenshot_20251222_070754_com.huawei.himovie.overseas_edit_34_1766380789847.jpg";
+import twistsImage from "@assets/Screenshot_20251222_070858_com.huawei.himovie.overseas_edit_33_1766380789921.jpg";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 
@@ -12,8 +12,8 @@ export default function About() {
           <div className="relative order-2 lg:order-1">
             <div className="relative z-10 rounded-lg overflow-hidden shadow-2xl">
               <img 
-                src={aboutImage} 
-                alt="Lumière Salon Interior" 
+                src={twistsImage} 
+                alt="Twists and Senegalese Braids" 
                 className="w-full h-full object-cover"
               />
             </div>

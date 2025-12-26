@@ -27,7 +27,7 @@ export default function Gallery() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [viewAll, setViewAll] = useState(false);
 
-  const galleryImages = viewAll ? allGalleryImages : [allGalleryImages[0]];
+  const galleryImages = viewAll ? allGalleryImages : [allGalleryImages[4]];
 
   return (
     <section id="gallery" className="py-24 bg-background">

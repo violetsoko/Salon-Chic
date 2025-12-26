@@ -12,13 +12,13 @@ import braidsAiImage from "@assets/Gemini_Generated_Image_41vmcf41vmcf41vm_17667
 const services = [
   {
     id: 1,
-    title: "Box Braids",
+    title: "Knotless Braids",
     image: boxBraidsImage,
     size: "large",
   },
   {
     id: 2,
-    title: "Knotless Braids",
+    title: "Cornrows",
     image: knotlessImage,
     size: "small",
   },
@@ -54,7 +54,7 @@ const services = [
   },
   {
     id: 8,
-    title: "Artistic Braiding",
+    title: "Feed-in Cornrows",
     image: braidsAiImage,
     size: "small",
   },

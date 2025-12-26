@@ -87,12 +87,9 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-serif font-medium mb-6">Contact</h3>
             <ul className="space-y-4 text-zinc-400">
-              <li>123 Fashion Avenue,<br/>New York, NY 10012</li>
+              <li>Enya Huntingdon,<br/>Cambridgeshire</li>
               <li>
-                <a href="tel:+12125550123" className="hover:text-accent transition-colors">+1 (212) 555-0123</a>
-              </li>
-              <li>
-                <a href="mailto:hello@lumieresalon.com" className="hover:text-accent transition-colors">hello@lumieresalon.com</a>
+                <a href="mailto:Florencesoko645@gmail.com" className="hover:text-accent transition-colors">Florencesoko645@gmail.com</a>
               </li>
             </ul>
           </div>
