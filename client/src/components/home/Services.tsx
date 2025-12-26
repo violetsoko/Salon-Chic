@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import cornrowsImage from "@assets/Screenshot_20251222_071218_com.android.gallery3d_edit_34296968_1766380789637.jpg";
 import goddessImage from "@assets/Screenshot_20251222_071537_com.huawei.himovie.overseas_edit_34_1766380789728.jpg";
 import boxBraidsImage from "@assets/Screenshot_20251222_071612_com.huawei.himovie.overseas_edit_34_1766380789766.jpg";
@@ -27,6 +28,7 @@ const services = [
     title: "Cornrows",
     image: cornrowsImage,
     size: "small",
+    textOverlay: "Who says underwigs\ncornrows must be boring\nmust be hidden",
   },
   {
     id: 4,
@@ -61,12 +63,9 @@ const services = [
 ];
 
 export default function Services() {
-  const handleViewAll = () => {
-    const gallerySection = document.getElementById("gallery");
-    if (gallerySection) {
-      gallerySection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const [viewAll, setViewAll] = useState(false);
+
+  const displayedServices = viewAll ? services : [services[0]];
 
   return (
     <section id="services" className="py-24 bg-background">
@@ -76,16 +75,16 @@ export default function Services() {
             <h2 className="text-5xl md:text-6xl font-serif font-bold text-primary mb-3">OUR SERVICES</h2>
           </div>
           <Button 
-            onClick={handleViewAll}
+            onClick={() => setViewAll(!viewAll)}
             className="bg-primary text-white hover:bg-primary/90 rounded-full px-6 h-10"
             data-testid="button-view-all-services"
           >
-            View All <ArrowRight className="ml-2 h-4 w-4" />
+            {viewAll ? "Show Less" : "View All"} <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {services.map((service) => (
+          {displayedServices.map((service) => (
             <div 
               key={service.id}
               className={`group relative overflow-hidden rounded-lg cursor-pointer transition-all duration-300 ${
@@ -98,6 +97,14 @@ export default function Services() {
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300" />
+              
+              {service.textOverlay && (
+                <div className="absolute inset-0 flex items-center justify-center p-4">
+                  <p className="text-white font-serif text-lg md:text-2xl font-bold text-center leading-tight">
+                    {service.textOverlay}
+                  </p>
+                </div>
+              )}
               
               <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6">
                 <h3 className="text-white font-serif text-lg md:text-2xl font-bold mb-3 uppercase tracking-wider">
