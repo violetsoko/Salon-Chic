@@ -5,6 +5,7 @@ import cornrowsImage from "@assets/Screenshot_20251222_071218_com.android.galler
 import goddessImage from "@assets/Screenshot_20251222_071537_com.huawei.himovie.overseas_edit_34_1766380789728.jpg";
 import boxBraidsImage from "@assets/Screenshot_20251222_071612_com.huawei.himovie.overseas_edit_34_1766380789766.jpg";
 import twistsImage from "@assets/Screenshot_20251222_070858_com.huawei.himovie.overseas_edit_33_1766380789921.jpg";
+import twistsDisplayImage from "@assets/Screenshot_20251222_070858_com.huawei.himovie.overseas_edit_45_1766906612291.jpg";
 import bunBraidsImage from "@assets/Screenshot_20251222_070824_com.huawei.himovie.overseas_edit_33_1766380789883.jpg";
 import feedInImage from "@assets/Screenshot_20251222_070948_com.huawei.himovie.overseas_edit_33_1766380789961.jpg";
 import knotlessImage from "@assets/Screenshot_20251222_071434_com.huawei.himovie.overseas_1766380789806.jpg";
@@ -14,7 +15,7 @@ const services = [
   {
     id: 1,
     title: "Knotless Braids",
-    image: cornrowsImage,
+    image: twistsDisplayImage,
     size: "large",
   },
   {
