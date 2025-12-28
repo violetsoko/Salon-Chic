@@ -1,4 +1,4 @@
-import twistsImage from "@assets/Screenshot_20251222_070858_com.huawei.himovie.overseas_edit_33_1766380789921.jpg";
+import pinterestImage from "@assets/Screenshot_20251219_221610_com.pinterest_edit_45761750143537_1766906612188.jpg";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 
@@ -12,8 +12,8 @@ export default function About() {
           <div className="relative order-2 lg:order-1">
             <div className="relative z-10 rounded-lg overflow-hidden shadow-2xl">
               <img 
-                src={twistsImage} 
-                alt="Twists and Senegalese Braids" 
+                src={pinterestImage} 
+                alt="Professional Braiding" 
                 className="w-full h-full object-cover"
               />
             </div>

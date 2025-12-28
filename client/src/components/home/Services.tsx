@@ -14,7 +14,7 @@ const services = [
   {
     id: 1,
     title: "Knotless Braids",
-    image: boxBraidsImage,
+    image: cornrowsImage,
     size: "large",
   },
   {
