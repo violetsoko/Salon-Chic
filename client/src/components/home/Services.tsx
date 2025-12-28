@@ -11,10 +11,18 @@ import feedInImage from "@assets/Screenshot_20251222_070948_com.huawei.himovie.o
 import knotlessImage from "@assets/Screenshot_20251222_071434_com.huawei.himovie.overseas_1766380789806.jpg";
 import braidsAiImage from "@assets/Gemini_Generated_Image_41vmcf41vmcf41vm_1766765928353.png";
 
-const services = [
+type Service = {
+  id: number;
+  title: string;
+  image: string;
+  size: "large" | "small";
+  textOverlay?: string;
+};
+
+const services: Service[] = [
   {
     id: 1,
-    title: "Knotless Braids",
+    title: "Cornrows",
     image: twistsDisplayImage,
     size: "large",
   },
@@ -29,7 +37,6 @@ const services = [
     title: "Cornrows",
     image: cornrowsImage,
     size: "small",
-    textOverlay: "Who says underwigs\ncornrows must be boring\nmust be hidden",
   },
   {
     id: 4,
