@@ -1,14 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
-import { Users, Calendar, Zap, Clock, BarChart3, TrendingUp, Settings, LogOut, Search, Bell } from "lucide-react";
-import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { Users, Calendar, Zap, Clock, BarChart3, TrendingUp, Settings, LogOut, Search, Bell, Check, X } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useToast } from "@/hooks/use-toast";
 import type { Appointment, Contact, Testimonial } from "@shared/schema";
 
 export default function Dashboard() {
-  const { data: appointments = [] } = useQuery<Appointment[]>({
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const { data: appointments = [], refetch: refetchAppointments } = useQuery<Appointment[]>({
     queryKey: ["appointments"],
     queryFn: async () => {
       const response = await fetch("/api/appointments");
@@ -35,37 +39,67 @@ export default function Dashboard() {
     },
   });
 
+  // Confirm booking mutation
+  const confirmMutation = useMutation({
+    mutationFn: async (appointmentId: string) => {
+      const response = await fetch(`/api/appointments/${appointmentId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "confirmed" }),
+      });
+      if (!response.ok) throw new Error("Failed to confirm appointment");
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Appointment confirmed!" });
+      refetchAppointments();
+    },
+    onError: () => {
+      toast({ title: "Error confirming appointment", variant: "destructive" });
+    },
+  });
+
+  // Cancel booking mutation
+  const cancelMutation = useMutation({
+    mutationFn: async (appointmentId: string) => {
+      const response = await fetch(`/api/appointments/${appointmentId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "cancelled" }),
+      });
+      if (!response.ok) throw new Error("Failed to cancel appointment");
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Appointment cancelled" });
+      refetchAppointments();
+    },
+    onError: () => {
+      toast({ title: "Error cancelling appointment", variant: "destructive" });
+    },
+  });
+
   // Generate chart data
   const appointmentChartData = [
-    { date: "Jan 1", count: 5 },
-    { date: "Jan 8", count: 3 },
-    { date: "Jan 15", count: 7 },
-    { date: "Jan 22", count: 4 },
-    { date: "Jan 29", count: 6 },
-    { date: "Feb 5", count: 8 },
-    { date: "Feb 12", count: 5 },
-    { date: "Feb 19", count: 9 },
+    { date: "Mon", count: 5 },
+    { date: "Tue", count: 3 },
+    { date: "Wed", count: 7 },
+    { date: "Thu", count: 4 },
+    { date: "Fri", count: 6 },
+    { date: "Sat", count: 8 },
+    { date: "Sun", count: 5 },
   ];
 
-  const financialData = [
-    { month: "Jan", revenue: 4000 },
-    { month: "Feb", revenue: 5200 },
-    { month: "Mar", revenue: 6100 },
-    { month: "Apr", revenue: 7300 },
-  ];
-
-  const stylists = [
-    { id: 1, name: "Delphine", role: "Hair Styling Artist", avatar: "👩‍🦱" },
-    { id: 2, name: "Gabriel Soares", role: "Makeup Artist", avatar: "👨‍🦱" },
-    { id: 3, name: "Cristian Mehringer", role: "Hair Styling Artist", avatar: "👨‍🦱" },
-    { id: 4, name: "Alex Edwards", role: "Hair Coloring Specialist", avatar: "👩‍🦰" },
-  ];
+  const stylist = { id: 1, name: "Florence Soko", role: "Hair Braiding Specialist", avatar: "👩‍🦱" };
 
   // Upcoming appointments sorted by date
   const upcomingAppointments = appointments
     .filter(apt => new Date(apt.appointmentDate) > new Date())
     .sort((a, b) => new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime())
-    .slice(0, 6);
+    .slice(0, 10);
+
+  const pendingAppointments = appointments.filter(apt => apt.status === "pending");
+  const confirmedAppointments = appointments.filter(apt => apt.status === "confirmed");
 
   // Generate calendar dates for current month
   const today = new Date();
@@ -73,63 +107,42 @@ export default function Dashboard() {
   const monthEnd = endOfMonth(today);
   const calendarDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-  const genderData = [
-    { name: "Female", value: 65 },
-    { name: "Male", value: 35 },
-  ];
-
-  const COLORS = {
-    accent: "hsl(35 40% 70%)", // Gold
-    plum: "hsl(330 15% 30%)", // Plum
-    cream: "hsl(40 20% 98%)", // Cream
-    charcoal: "hsl(270 5% 20%)", // Charcoal
-  };
-
   return (
-    <div className="flex flex-col lg:flex-row h-screen bg-[hsl(40_20%_98%)]">
+    <div className="flex flex-col lg:flex-row h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className="w-full lg:w-64 bg-[hsl(270_5%_20%)] text-white p-6 overflow-y-auto lg:overflow-y-auto">
-        <div className="mb-8">
-          <h2 className="text-2xl font-serif font-bold">Salon.</h2>
+      <div className="w-full lg:w-64 bg-white border-r border-gray-200 p-6 overflow-y-auto">
+        <div className="mb-8 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-red-500 flex items-center justify-center text-white font-bold text-lg">
+            F
+          </div>
+          <h2 className="text-xl font-serif font-bold text-gray-900">FLORENCE</h2>
         </div>
 
         <nav className="space-y-2">
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-white/10">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-red-50 text-red-600">
             <BarChart3 size={20} />
-            <span className="font-medium">Dashboard</span>
+            <span className="font-semibold">Dashboard</span>
           </div>
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 cursor-pointer transition">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 cursor-pointer transition text-gray-700">
             <Calendar size={20} />
             <span>Appointments</span>
           </div>
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 cursor-pointer transition">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 cursor-pointer transition text-gray-700">
             <Users size={20} />
             <span>Clients</span>
           </div>
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 cursor-pointer transition">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 cursor-pointer transition text-gray-700">
             <Zap size={20} />
             <span>Analytics</span>
-          </div>
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 cursor-pointer transition">
-            <Clock size={20} />
-            <span>Message</span>
-          </div>
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 cursor-pointer transition">
-            <TrendingUp size={20} />
-            <span>Reviews</span>
-          </div>
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 cursor-pointer transition">
-            <BarChart3 size={20} />
-            <span>Finances</span>
           </div>
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6 space-y-2">
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 cursor-pointer transition">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 cursor-pointer transition text-gray-700">
             <Settings size={20} />
             <span>Settings</span>
           </div>
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 cursor-pointer transition">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 cursor-pointer transition text-gray-700">
             <LogOut size={20} />
             <span>Logout</span>
           </div>
@@ -139,27 +152,28 @@ export default function Dashboard() {
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto w-full">
         {/* Top Header */}
-        <div className="bg-white border-b border-gray-200 px-4 md:px-8 py-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-serif font-bold text-[hsl(270_5%_20%)] mb-1">Overview</h1>
-            <p className="text-sm text-gray-500">This Week</p>
-          </div>
-          <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto">
-            <div className="relative">
-              <Search size={20} className="absolute left-3 top-3 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm"
-                data-testid="input-search"
-              />
+        <div className="bg-white border-b border-gray-200 px-4 md:px-8 py-6 sticky top-0 z-10">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-serif font-bold text-gray-900">Dashboard</h1>
             </div>
-            <Bell size={20} className="text-gray-600 cursor-pointer" />
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[hsl(35_40%_70%)] flex items-center justify-center text-white font-semibold">
-                RM
+            <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto">
+              <div className="relative flex-1 md:flex-none">
+                <Search size={20} className="absolute left-3 top-3 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="w-full md:w-48 pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm"
+                  data-testid="input-search"
+                />
               </div>
-              <span className="text-sm font-medium">Rithvical Moreira</span>
+              <Bell size={20} className="text-gray-600 cursor-pointer" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center text-white font-semibold text-sm">
+                  FS
+                </div>
+                <span className="text-sm font-medium text-gray-900 hidden sm:block">Florence Soko</span>
+              </div>
             </div>
           </div>
         </div>
@@ -167,57 +181,61 @@ export default function Dashboard() {
         <div className="p-4 md:p-8">
           {/* Metrics Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-sm">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-600 text-sm mb-1">Clients</p>
-                    <p className="text-3xl font-bold text-[hsl(270_5%_20%)]">{appointments.length * 3}</p>
+                    <p className="text-gray-600 text-sm mb-1">Total Clients</p>
+                    <p className="text-3xl font-bold text-gray-900">{appointments.length * 3}</p>
+                    <p className="text-xs text-gray-500 mt-1">Jan 23, 2026</p>
                   </div>
-                  <div className="w-16 h-16 rounded-full bg-[hsl(35_40%_70%)]/20 flex items-center justify-center">
-                    <Users size={28} className="text-[hsl(35_40%_70%)]" />
+                  <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Users size={28} className="text-blue-500" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-sm">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-600 text-sm mb-1">Appointments</p>
-                    <p className="text-3xl font-bold text-[hsl(270_5%_20%)]">{appointments.length}</p>
+                    <p className="text-gray-600 text-sm mb-1">Total Service</p>
+                    <p className="text-3xl font-bold text-gray-900">8</p>
+                    <p className="text-xs text-gray-500 mt-1">Jan 23, 2026</p>
                   </div>
-                  <div className="w-16 h-16 rounded-full bg-[hsl(35_40%_70%)]/20 flex items-center justify-center">
-                    <Calendar size={28} className="text-[hsl(35_40%_70%)]" />
+                  <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                    <Zap size={28} className="text-green-500" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-sm">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-600 text-sm mb-1">Services</p>
-                    <p className="text-3xl font-bold text-[hsl(270_5%_20%)]">8</p>
+                    <p className="text-gray-600 text-sm mb-1">Total Stylist</p>
+                    <p className="text-3xl font-bold text-gray-900">1</p>
+                    <p className="text-xs text-gray-500 mt-1">Florence Soko</p>
                   </div>
-                  <div className="w-16 h-16 rounded-full bg-[hsl(35_40%_70%)]/20 flex items-center justify-center">
-                    <Zap size={28} className="text-[hsl(35_40%_70%)]" />
+                  <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
+                    <Users size={28} className="text-purple-500" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-sm">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-600 text-sm mb-1">Treatments</p>
-                    <p className="text-3xl font-bold text-[hsl(270_5%_20%)]">{appointments.length * 2}</p>
+                    <p className="text-gray-600 text-sm mb-1">Appointment</p>
+                    <p className="text-3xl font-bold text-gray-900">{appointments.length}</p>
+                    <p className="text-xs text-gray-500 mt-1">Jan 23, 2026</p>
                   </div>
-                  <div className="w-16 h-16 rounded-full bg-[hsl(35_40%_70%)]/20 flex items-center justify-center">
-                    <TrendingUp size={28} className="text-[hsl(35_40%_70%)]" />
+                  <div className="w-16 h-16 rounded-full bg-cyan-100 flex items-center justify-center">
+                    <Calendar size={28} className="text-cyan-500" />
                   </div>
                 </div>
               </CardContent>
@@ -225,146 +243,169 @@ export default function Dashboard() {
           </div>
 
           {/* Charts Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* Appointments Chart */}
-            <Card className="border-0 shadow-md">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* Clients Statistic Chart */}
+            <Card className="border-0 shadow-sm lg:col-span-2">
               <CardHeader>
-                <CardTitle className="text-lg">Overall Appointments</CardTitle>
+                <CardTitle className="text-lg">Clients Statistic</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={appointmentChartData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="count" fill="hsl(35 40% 70%)" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="count" fill="#EF4444" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-          </div>
 
-          {/* Stylists */}
-          <div className="mb-8">
-            <Card className="border-0 shadow-md">
+            {/* Top Stylists */}
+            <Card className="border-0 shadow-sm">
               <CardHeader>
-                <CardTitle className="text-lg">Stylists</CardTitle>
+                <CardTitle className="text-lg">Top Stylists</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {stylists.map((stylist) => (
-                    <div key={stylist.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[hsl(35_40%_70%)]/20 flex items-center justify-center text-xl flex-shrink-0">
-                          {stylist.avatar}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="font-medium text-sm truncate">{stylist.name}</p>
-                          <p className="text-xs text-gray-600 truncate">{stylist.role}</p>
-                        </div>
-                      </div>
-                      <div className="cursor-pointer ml-2">⋮</div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
+                    <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center text-white text-lg flex-shrink-0">
+                      {stylist.avatar}
                     </div>
-                  ))}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-gray-900">{stylist.name}</p>
+                      <p className="text-xs text-gray-600">{stylist.role}</p>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <div className="aspect-square w-full rounded-lg overflow-hidden bg-gray-200">
+                      <div className="w-full h-full bg-gradient-to-br from-amber-200 to-orange-300 flex items-center justify-center">
+                        <span className="text-6xl">👰</span>
+                      </div>
+                    </div>
+                    <button className="absolute bottom-3 right-3 bg-red-500 text-white p-3 rounded-full hover:bg-red-600 transition shadow-lg">
+                      <span className="text-sm">→</span>
+                    </button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Right Panel - Upcoming Appointments */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Contact Inquiries */}
-            {contacts.length > 0 && (
-              <Card className="border-0 shadow-md lg:col-span-2">
+          {/* Booking Status - Pending Appointments */}
+          <div className="mb-8">
+            <Card className="border-0 shadow-sm">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle className="text-lg">Booking Requests</CardTitle>
+                  <div className="flex gap-2">
+                    <button className="text-xs px-3 py-1 rounded-full bg-red-500 text-white hover:bg-red-600 transition">
+                      Upcoming Booking
+                    </button>
+                    <button className="text-xs px-3 py-1 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
+                      All Booking
+                    </button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Client</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Service</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Date & Time</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {upcomingAppointments.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="py-8 text-center text-gray-500">
+                            No upcoming appointments
+                          </td>
+                        </tr>
+                      ) : (
+                        upcomingAppointments.map((apt) => (
+                          <tr key={apt.id} className="border-b border-gray-100 hover:bg-gray-50">
+                            <td className="py-3 px-4">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white text-xs font-semibold">
+                                  {apt.clientName.charAt(0)}
+                                </div>
+                                <span className="font-medium text-gray-900">{apt.clientName}</span>
+                              </div>
+                            </td>
+                            <td className="py-3 px-4 text-gray-600">{apt.service}</td>
+                            <td className="py-3 px-4 text-gray-600">{format(new Date(apt.appointmentDate), "MMM dd, h:mm a")}</td>
+                            <td className="py-3 px-4">
+                              <Badge variant={apt.status === "pending" ? "outline" : "default"}>
+                                {apt.status}
+                              </Badge>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => confirmMutation.mutate(apt.id)}
+                                  disabled={apt.status !== "pending" || confirmMutation.isPending}
+                                  className="p-1.5 rounded hover:bg-green-100 text-green-600 disabled:opacity-50"
+                                  data-testid={`button-confirm-${apt.id}`}
+                                  title="Confirm booking"
+                                >
+                                  <Check size={16} />
+                                </button>
+                                <button
+                                  onClick={() => cancelMutation.mutate(apt.id)}
+                                  disabled={apt.status === "cancelled" || cancelMutation.isPending}
+                                  className="p-1.5 rounded hover:bg-red-100 text-red-600 disabled:opacity-50"
+                                  data-testid={`button-cancel-${apt.id}`}
+                                  title="Cancel booking"
+                                >
+                                  <X size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Recent Inquiries */}
+          {contacts.length > 0 && (
+            <div className="mb-8">
+              <Card className="border-0 shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-lg">Recent Inquiries</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {contacts.slice(0, 3).map((contact) => (
-                      <div key={contact.id} className="p-3 rounded-lg border border-gray-200">
-                        <div className="flex justify-between items-start mb-1">
-                          <p className="font-medium text-sm">{contact.name}</p>
-                          <Badge className="text-xs" variant="outline">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {contacts.slice(0, 6).map((contact) => (
+                      <div key={contact.id} className="p-4 rounded-lg border border-gray-200 hover:border-gray-300">
+                        <div className="flex justify-between items-start mb-2">
+                          <p className="font-semibold text-gray-900 text-sm">{contact.name}</p>
+                          <Badge variant="outline" className="text-xs">
                             {contact.status}
                           </Badge>
                         </div>
-                        <p className="text-xs text-gray-600">{contact.email}</p>
-                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{contact.message}</p>
+                        <p className="text-xs text-gray-600 mb-2">{contact.email}</p>
+                        <p className="text-xs text-gray-500 line-clamp-2">{contact.message}</p>
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
-            )}
-
-            {/* Upcoming Appointments Panel */}
-            <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg">Upcoming Appointments</CardTitle>
-                <div className="text-xs text-gray-600">February 2026</div>
-              </CardHeader>
-              <CardContent>
-                {/* Calendar */}
-                <div className="mb-6">
-                  <div className="grid grid-cols-7 gap-2 mb-4">
-                    {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-                      <div key={day} className="text-center text-xs font-semibold text-gray-600">
-                        {day}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-7 gap-2">
-                    {calendarDays.slice(0, 28).map((day, idx) => (
-                      <div
-                        key={idx}
-                        className={`text-center text-sm py-2 rounded ${
-                          day.getDate() === today.getDate() && day.getMonth() === today.getMonth()
-                            ? "bg-[hsl(35_40%_70%)] text-white font-bold"
-                            : "text-gray-700"
-                        }`}
-                        data-testid={`calendar-day-${day.getDate()}`}
-                      >
-                        {day.getDate()}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Appointments List */}
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {upcomingAppointments.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center py-4">No upcoming appointments</p>
-                  ) : (
-                    upcomingAppointments.map((apt) => (
-                      <div key={apt.id} className="p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 rounded-full bg-[hsl(35_40%_70%)] flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-                            {apt.clientName.charAt(0)}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-sm truncate">{apt.clientName}</p>
-                            <p className="text-xs text-gray-600">{apt.service}</p>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {format(new Date(apt.appointmentDate), "MMM dd, h:mm a")}
-                            </p>
-                          </div>
-                          <div className="cursor-pointer">⋮</div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
-
-// Mobile-friendly sidebar toggle would go here
-// For now, the sidebar is always visible
-// On mobile, it would need to be hidden or converted to a hamburger menu
