@@ -1,39 +1,102 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
-import { Users, Calendar, Zap, Clock, BarChart3, TrendingUp, Settings, LogOut, Search, Bell, Check, X } from "lucide-react";
+import { Users, Calendar, Zap, BarChart3, Settings, LogOut, Search, Bell, Check, X } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useToast } from "@/hooks/use-toast";
-import type { Appointment, Contact, Testimonial } from "@shared/schema";
+import type { Appointment, Contact } from "@shared/schema";
+import { format } from "date-fns";
 
 export default function Dashboard() {
-  const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const { data: appointments = [], refetch: refetchAppointments } = useQuery<Appointment[]>({
+  /* ------------------ DATA ------------------ */
+  const { data: appointments = [], refetch } = useQuery<Appointment[]>({
     queryKey: ["appointments"],
     queryFn: async () => {
-      const response = await fetch("/api/appointments");
-      if (!response.ok) throw new Error("Failed to fetch");
-      return response.json();
+      const res = await fetch("/api/appointments");
+      if (!res.ok) throw new Error("Failed");
+      return res.json();
     },
   });
 
   const { data: contacts = [] } = useQuery<Contact[]>({
     queryKey: ["contacts"],
     queryFn: async () => {
-      const response = await fetch("/api/contacts");
-      if (!response.ok) throw new Error("Failed to fetch");
-      return response.json();
+      const res = await fetch("/api/contacts");
+      if (!res.ok) throw new Error("Failed");
+      return res.json();
     },
   });
 
-  const { data: testimonials = [] } = useQuery<Testimonial[]>({
-    queryKey: ["testimonials"],
-    queryFn: async () => {
-      const response = await fetch("/api/testimonials");
+  const confirmMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/appointments/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "confirmed" }),
+      });
+      if (!res.ok) throw new Error("Failed");
+    },
+    onSuccess: () => {
+      toast({ title: "Appointment confirmed" });
+      refetch();
+    },
+  });
+
+  const cancelMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/appointments/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "cancelled" }),
+      });
+      if (!res.ok) throw new Error("Failed");
+    },
+    onSuccess: () => {
+      toast({ title: "Appointment cancelled" });
+      refetch();
+    },
+  });
+
+  const handleNavClick = () => setSidebarOpen(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
+
+  const chartData = [
+    { day: "Mon", count: 5 },
+    { day: "Tue", count: 3 },
+    { day: "Wed", count: 7 },
+    { day: "Thu", count: 4 },
+    { day: "Fri", count: 6 },
+    { day: "Sat", count: 8 },
+    { day: "Sun", count: 5 },
+  ];
+
+  return (
+    <div className="flex h-screen bg-gray-50">
+      {/* ================= SIDEBAR ================= */}
+      <aside
+        className={`
+          fixed lg:static z-50 top-0 left-0 h-full w-64
+          bg-white border-r border-gray-200 p-6
+          transform transition-transform duration-300
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          lg:translate-x-0
+        `}
+      >
+        <h2 className="text-xl font-bold mb-8">FLORENCE</h2>
+
+        <nav className="space-y-2">
+          <SidebarItem icon={<BarChart3 />} label="Dashboard" onClick={handleNavClick} />
+          <SidebarItem icon={<Calendar />} label="Appointments" onClick={handleNavClick} />
+          <SidebarItem icon={<Users />} label="Clients" onClick={handleNavClick} />
+          <SidebarItem icon={<Zap />} label="Analytics" onClick={handleNavClick} />
       if (!response.ok) throw new Error("Failed to fetch");
       return response.json();
     },
