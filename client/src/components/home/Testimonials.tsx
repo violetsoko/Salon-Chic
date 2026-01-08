@@ -21,14 +21,13 @@ export default function Testimonials() {
           <h4 className="text-accent uppercase tracking-widest text-sm font-semibold mb-3">Client Reviews</h4>
           <h2 className="text-4xl md:text-5xl font-serif font-medium text-primary mb-6">What Our Clients Say</h2>
           <p className="text-muted-foreground text-lg font-light">
-            Real stories from clients who've experienced the Lumière transformation.
+            Real stories from clients who've experienced Florence hair transformation.
           </p>
         </div>
 
         {displayTestimonials.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            <p>Testimonials coming soon. Be the first to share your experience!</p>
-          </div>
+           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {displayTestimonials.map((testimonial) => (
