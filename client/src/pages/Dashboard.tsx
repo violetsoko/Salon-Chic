@@ -10,30 +10,288 @@ import { format } from "date-fns";
 
 export default function Dashboard() {
   const { toast } = useToast();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  /* ------------------ DATA ------------------ */
-  const { data: appointments = [], refetch } = useQuery<Appointment[]>({
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeView, setActiveView] = useState("dashboard"); // dashboard | appointments | clients | analytics | settings
+  const [loggedIn, setLoggedIn] = useState(true);
+
+  // Fetch appointments
+  const { data: appointments = [], refetch: refetchAppointments } = useQuery<Appointment[]>({
     queryKey: ["appointments"],
     queryFn: async () => {
       const res = await fetch("/api/appointments");
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) throw new Error("Failed to fetch appointments");
       return res.json();
     },
   });
 
+  // Fetch contacts
   const { data: contacts = [] } = useQuery<Contact[]>({
     queryKey: ["contacts"],
     queryFn: async () => {
       const res = await fetch("/api/contacts");
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) throw new Error("Failed to fetch contacts");
       return res.json();
     },
   });
 
+  // Confirm / cancel appointments
   const confirmMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`/api/appointments/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "confirmed" }),
+      });
+      if (!res.ok) throw new Error("Failed");
+    },
+    onSuccess: () => {
+      toast({ title: "Appointment confirmed" });
+      refetchAppointments();
+    },
+  });
+
+  const cancelMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/appointments/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "cancelled" }),
+      });
+      if (!res.ok) throw new Error("Failed");
+    },
+    onSuccess: () => {
+      toast({ title: "Appointment cancelled" });
+      refetchAppointments();
+    },
+  });
+
+  // Sample stylist
+  const stylist = {
+    id: 1,
+    name: "Florence Soko",
+    role: "Hair Braiding Specialist",
+    avatar: "/nanoedit-result_1766908576955.png",
+  };
+
+  // Filter upcoming appointments
+  const upcomingAppointments = appointments
+    .filter((apt) => new Date(apt.appointmentDate) > new Date())
+    .sort((a, b) => new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime());
+
+  // Dashboard chart data
+  const statusCounts = [
+    { status: "pending", count: appointments.filter(a => a.status === "pending").length },
+    { status: "confirmed", count: appointments.filter(a => a.status === "confirmed").length },
+    { status: "cancelled", count: appointments.filter(a => a.status === "cancelled").length },
+  ];
+
+  // Handle login/logout
+  const handleLogout = () => {
+    setLoggedIn(false);
+    localStorage.removeItem("token");
+  };
+  const handleLogin = () => {
+    setLoggedIn(true);
+    localStorage.setItem("token", "dummy");
+  };
+
+  const menuItems = [
+    { key: "dashboard", icon: <BarChart3 size={20} />, label: "Dashboard" },
+    { key: "appointments", icon: <Calendar size={20} />, label: "Appointments" },
+    { key: "clients", icon: <Users size={20} />, label: "Clients" },
+    { key: "analytics", icon: <Zap size={20} />, label: "Analytics" },
+    { key: "settings", icon: <Settings size={20} />, label: "Settings" },
+  ];
+
+  if (!loggedIn) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
+        <h1 className="text-3xl font-bold mb-6">Please Login</h1>
+        <button
+          className="px-6 py-3 bg-red-500 text-white rounded hover:bg-red-600 transition"
+          onClick={handleLogin}
+        >
+          Login
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
+      {sidebarOpen && (
+        <aside className="w-64 bg-white border-r border-gray-200 p-6 flex flex-col justify-between">
+          <div>
+            <h2 className="text-xl font-bold mb-8">FLORENCE</h2>
+            <nav className="space-y-2">
+              {menuItems.map((item) => (
+                <div
+                  key={item.key}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer ${
+                    activeView === item.key ? "bg-red-50 text-red-600" : "hover:bg-gray-100 text-gray-700"
+                  }`}
+                  onClick={() => setActiveView(item.key)}
+                >
+                  {item.icon}
+                  <span className="font-semibold">{item.label}</span>
+                </div>
+              ))}
+            </nav>
+          </div>
+          <div className="space-y-2">
+            <button
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700"
+              onClick={handleLogout}
+            >
+              <LogOut size={20} />
+              Logout
+            </button>
+          </div>
+        </aside>
+      )}
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto w-full">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 px-4 md:px-8 py-6 flex justify-between items-center sticky top-0 z-10">
+          <button className="text-gray-700 lg:hidden" onClick={() => setSidebarOpen(!sidebarOpen)}>
+            ☰
+          </button>
+          <h1 className="text-3xl font-bold text-gray-900 capitalize">{activeView}</h1>
+          <div className="flex items-center gap-3">
+            <Search size={20} />
+            <Bell size={20} />
+          </div>
+        </div>
+
+        <div className="p-4 md:p-8 space-y-8">
+          {/* Dashboard View */}
+          {activeView === "dashboard" && (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card><CardContent>Total Clients: {appointments.length * 3}</CardContent></Card>
+                <Card><CardContent>Total Services: 8</CardContent></Card>
+                <Card><CardContent>Total Stylists: 1</CardContent></Card>
+                <Card><CardContent>Appointments: {appointments.length}</CardContent></Card>
+              </div>
+
+              {/* Appointment Status Chart */}
+              <Card>
+                <CardHeader><CardTitle>Appointments Status</CardTitle></CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={statusCounts}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="status" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="count" fill="#EF4444" radius={[8, 8, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* Top Stylist */}
+              <Card>
+                <CardHeader><CardTitle>Top Stylist</CardTitle></CardHeader>
+                <CardContent className="flex items-center gap-4">
+                  <img src={stylist.avatar} alt="Stylist" className="w-24 h-24 rounded-full object-cover" />
+                  <div>
+                    <p className="font-semibold">{stylist.name}</p>
+                    <p className="text-sm text-gray-500">{stylist.role}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
+
+          {/* Appointments View */}
+          {activeView === "appointments" && (
+            <Card>
+              <CardHeader><CardTitle>Upcoming Appointments</CardTitle></CardHeader>
+              <CardContent>
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b">
+                      <th>Client</th>
+                      <th>Service</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {upcomingAppointments.map((apt) => (
+                      <tr key={apt.id} className="border-b hover:bg-gray-50">
+                        <td>{apt.clientName}</td>
+                        <td>{apt.service}</td>
+                        <td>{format(new Date(apt.appointmentDate), "MMM dd, h:mm a")}</td>
+                        <td>
+                          <Badge
+                            variant={
+                              apt.status === "confirmed" ? "default" :
+                              apt.status === "pending" ? "outline" : "destructive"
+                            }
+                          >
+                            {apt.status}
+                          </Badge>
+                        </td>
+                        <td className="flex gap-2">
+                          <button
+                            onClick={() => confirmMutation.mutate(apt.id)}
+                            disabled={apt.status !== "pending"}
+                            className="text-green-500"
+                          >
+                            <Check size={16} />
+                          </button>
+                          <button
+                            onClick={() => cancelMutation.mutate(apt.id)}
+                            disabled={apt.status === "cancelled"}
+                            className="text-red-500"
+                          >
+                            <X size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Clients View */}
+          {activeView === "clients" && (
+            <Card>
+              <CardHeader><CardTitle>Clients</CardTitle></CardHeader>
+              <CardContent>
+                {contacts.map((c) => (
+                  <div key={c.id} className="flex justify-between p-2 border-b">
+                    <div>{c.name}</div>
+                    <div>{c.email}</div>
+                    <div>{c.status}</div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Settings View */}
+          {activeView === "settings" && (
+            <Card>
+              <CardHeader><CardTitle>Settings</CardTitle></CardHeader>
+              <CardContent>
+                <p className="text-sm">Settings panel: theme, profile, notifications can be implemented here.</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "confirmed" }),
